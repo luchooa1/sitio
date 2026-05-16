@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGHV - Comando de Aviación</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="/js/sweetalert2.all.min.js"></script>
+    
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="top-bar d-flex justify-content-between align-items-center">
+    <h3 class="m-0 text-warning fw-bold">SGHV | <span class="text-white fw-light fs-5">COMANDO DE AVIACIÓN</span></h3>
+    <div class="d-flex align-items-center">
+        <span class="badge bg-warning text-dark me-3 p-2" id="rolUsuario">CARGANDO...</span>
+        <button class="btn btn-sm btn-outline-info me-2" onclick="abrirModalCambiarPassword()">
+            <i class="fas fa-key"></i> CAMBIAR CONTRASEÑA
+        </button>
+        <button id="btnResetPassword" class="btn btn-sm btn-outline-warning me-2" style="display:none;" onclick="abrirModalUsuarios()">
+            <i class="fas fa-users"></i> RESTABLECER CONTRASEÑAS
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="cerrarSesion()">CERRAR SESIÓN</button>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div id="panelMenu" class="row g-4 justify-content-center">
+        <div class="col-md-4"><div class="menu-card" data-seccion="control_flota"><span class="icon-box">🚁</span><h4 class="text-warning">1. DISPOSITIVO OPERACIONAL</h4></div></div>
+        <div class="col-md-4"><div class="menu-card" data-seccion="asignacion_horas"><span class="icon-box">⏱️</span><h4 class="text-warning">2. ASIGNACIÓN DE HORAS</h4></div></div>
+        <div class="col-md-4"><div class="menu-card" data-seccion="reporte_mision"><span class="icon-box">📝</span><h4 class="text-warning">3. REPORTE DE MISIÓN</h4></div></div>
+        <div class="col-md-4"><div class="menu-card" data-seccion="aeronaves"><span class="icon-box">✈️</span><h4 class="text-warning">4. GESTIÓN DE AERONAVES</h4></div></div>
+        <div class="col-md-4"><div class="menu-card" data-seccion="reporte_diario"><span class="icon-box">📋</span><h4 class="text-warning">5. REPORTE DIARIO (COT)</h4></div></div>
+        <div class="col-md-4"><div class="menu-card" data-seccion="tablero_control"><span class="icon-box">📊</span><h4 class="text-warning">6. TABLERO CONTROL</h4></div></div>
+    </div>
+
+    <div id="areaTrabajo" class="oculto mt-4">
+        <button class="btn btn-secondary mb-3 btn-sm" onclick="volverMenu()">← VOLVER AL MENÚ</button>
+        <div id="contenido" class="p-4 bg-dark border border-secondary rounded shadow-lg"></div>
+    </div>
+</div>
+
+<!-- MODAL EDICIÓN DE AERONAVES -->
+<div class="modal fade" id="modalEditarAeronave" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-warning">✏️ ACTUALIZACIÓN TÉCNICA DE AERONAVE</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3"><label class="form-label text-muted">MATRÍCULA</label><input type="text" id="editMatricula" class="form-control campo-solo-lectura" readonly></div>
+                    <div class="col-md-3 mb-3"><label class="form-label text-muted">MODELO</label><input type="text" id="editModelo" class="form-control campo-solo-lectura" readonly></div>
+                    <div class="col-md-3 mb-3"><label class="form-label text-muted">CLASE</label><input type="text" id="editClase" class="form-control campo-solo-lectura" readonly></div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label text-muted">UNIDAD ASIGNADA</label>
+                        <select id="editUnidad" class="form-select">
+                            <option value="">-- SELECCIONE UNIDAD --</option>
+                            <option value="BMMA1">BMMA1</option>
+                            <option value="BMMA2">BMMA2</option>
+                            <option value="BMMA3">BMMA3</option>
+                            <option value="BMMA4">BMMA4</option>
+                            <option value="BMMA5">BMMA5</option>
+                            <option value="BMMA6">BMMA6</option>
+                            <option value="BMMA7">BMMA7</option>
+                            <option value="BMMA8">BMMA8</option>
+                            <option value="BAOEA">BAOEA</option>
+                            <option value="BANOT">BANOT</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label text-warning fw-bold">ESTADO OPERACIONAL</label>
+                        <select id="editEstado" class="form-select">
+                            <option value="ACL">ACL - AERONAVE COMPLETAMENTE LISTA</option>
+                            <option value="AMP">AMP - MANTENIMIENTO PROGRAMADO</option>
+                            <option value="AMI">AMI - MANTENIMIENTO IMPREVISTO</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-success">✈️ HORAS FLUJO (BRIAV32)</label>
+                        <input type="number" id="editHorasHangar" class="form-control" step="0.1" min="0">
+                        <small class="text-muted">⚠️ Al modificar este valor, las horas disponibles se actualizarán automáticamente.</small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-warning fw-bold">🕐 HORAS DISPONIBLES</label>
+                        <input type="text" id="editHorasDisponibles" class="form-control campo-solo-lectura" readonly>
+                        <small class="text-muted">⚠️ Valor AUTOMÁTICO. Horas que la aeronave aún puede volar.</small>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label text-info">📊 HORAS TOTALES HISTÓRICO</label>
+                        <input type="number" id="editHorasHistorico" class="form-control" step="0.1" min="0">
+                        <small id="msgAdmin" class="text-muted"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCELAR</button>
+                <button type="button" class="btn btn-warning fw-bold" onclick="guardarEdicionAeronave()">💾 GUARDAR CAMBIOS</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL GESTIÓN DE USUARIOS (RESTABLECER CONTRASEÑAS) -->
+<div class="modal fade" id="modalGestionUsuarios" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-warning"><i class="fas fa-users me-2"></i>GESTIÓN DE USUARIOS</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr class="text-warning">
+                                <th>USUARIO</th>
+                                <th>ROL</th>
+                                <th>ACCIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaUsuarios">
+                            <tr><td colspan="3" class="text-center text-muted">Cargando...<\/td><\/tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CERRAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CAMBIAR CONTRASEÑA -->
+<div class="modal fade" id="modalCambiarPassword" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-warning"><i class="fas fa-key me-2"></i>CAMBIAR CONTRASEÑA</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label text-warning">USUARIO</label>
+                    <input type="text" id="cambiarUser" class="form-control" readonly style="background:#0a0a0a; color:#fff;">
+                    <small class="text-info">📌 Su nombre de usuario (no editable)</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-warning">CONTRASEÑA ACTUAL</label>
+                    <input type="password" id="passActual" class="form-control" placeholder="Escriba su contraseña actual" style="background:#0a0a0a; color:#fff;">
+                    <small class="text-info">🔒 Ingrese la contraseña que usa actualmente</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-warning">NUEVA CONTRASEÑA</label>
+                    <input type="password" id="passNueva" class="form-control" placeholder="Mínimo 8 caracteres" style="background:#0a0a0a; color:#fff;">
+                    <small class="text-info">✨ Requisitos: mínimo 8 caracteres, una mayúscula y un número</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-warning">CONFIRMAR NUEVA CONTRASEÑA</label>
+                    <input type="password" id="passConfirm" class="form-control" placeholder="Repita la nueva contraseña" style="background:#0a0a0a; color:#fff;">
+                    <small class="text-info">✅ Vuelva a escribir la nueva contraseña para confirmar</small>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCELAR</button>
+                <button type="button" class="btn btn-warning fw-bold" onclick="cambiarPassword()">ACTUALIZAR CONTRASEÑA</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/controlFlota.js"></script>
+<script src="/js/asignacionHoras.js"></script>
+<script src="/js/reporteMision.js"></script>
+<script src="/js/gestionAeronaves.js"></script>
+<script src="/js/reporteDiario.js"></script>
+<script src="/js/tableroControl.js"></script>
+<script src="/js/chart.umd.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+/* ============================================================
+   ESTILOS GLOBALES Y VARIABLES - SISTEMA SGHV
+   ============================================================ */
+:root { 
+    --militar-dark: #0f0f0f; 
+    --militar-gold: #f39c12; 
+    --militar-card: #1a1a1a; 
+    --militar-border: #333;
+}
+body { 
+    background-color: var(--militar-dark); 
+    color: #fff; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+.top-bar { 
+    background: #1b2631; 
+    border-bottom: 3px solid var(--militar-gold); 
+    padding: 15px 25px; 
+}
+.menu-card { 
+    background: var(--militar-card); 
+    border: 1px solid var(--militar-border); 
+    border-radius: 12px; 
+    padding: 40px 20px; 
+    text-align: center; 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+    height: 100%; 
+}
+.menu-card:hover { 
+    border-color: var(--militar-gold); 
+    transform: translateY(-8px); 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+.icon-box { font-size: 3rem; margin-bottom: 15px; display: block; }
+.oculto { display: none !important; }
+
+/* Estilos para formularios y tablas en modo oscuro */
+select, input, textarea { 
+    background-color: #000 !important; 
+    color: #fff !important; 
+    border: 1px solid #444 !important; 
+}
+.table-responsive { max-height: 550px; overflow-y: auto; }
+.table-dark { --bs-table-bg: #1a1a1a; }
+
+/* Badges de Estado Operacional */
+.badge-acl { background-color: #28a745; color: white; }
+.badge-amp { background-color: #ffc107; color: #000; }
+.badge-ami { background-color: #dc3545; color: white; }
+
+/* Componentes de CONTROL DE FLOTA */
+.columna-aeronaves { 
+    background: #1a1a1a; 
+    border-radius: 12px; 
+    padding: 15px; 
+    height: 500px; 
+    overflow-y: auto; 
+    border: 1px solid #333; 
+}
+.item-aeronave { 
+    background: #0f0f0f; 
+    border: 1px solid #333; 
+    border-radius: 8px; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+.matricula-fija { 
+    font-family: 'Courier New', monospace; 
+    font-weight: bold; 
+    font-size: 1rem; 
+    color: var(--militar-gold);
+}
+
+/* Modal y Edición */
+.modal-content { background-color: #1a1a1a; border: 1px solid #444; }
+.campo-solo-lectura { 
+    background-color: #0a0a0a !important; 
+    color: #aaa !important; 
+    border-color: #555 !important; 
+    cursor: not-allowed; 
+}
+.planilla-fila { 
+    background: #0f0f0f; 
+    border: 1px solid #333; 
+    border-radius: 8px; 
+    padding: 10px; 
+    margin-bottom: 8px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+.badge-obligatorio { 
+    background: #dc3545; 
+    font-size: 0.65rem; 
+    padding: 2px 6px; 
+    border-radius: 10px; 
+    margin-left: 8px; 
+}
+.texto-advertencia { font-size: 0.7rem; color: #ffc107; margin-top: 4px; }
+.texto-info { font-size: 0.7rem; color: #17a2b8; margin-top: 4px; }
+.card-form { 
+    background: var(--militar-card); 
+    border-radius: 16px; 
+    padding: 20px; 
+    border: 1px solid #333; 
+    margin-bottom: 20px; 
+}
+.card-form h5 { 
+    color: var(--militar-gold); 
+    margin-bottom: 15px; 
+    border-left: 3px solid var(--militar-gold); 
+    padding-left: 12px; 
+}
+.btn-cerrar { 
+    background-color: #dc3545; 
+    color: white; 
+    border: none; 
+    padding: 5px 15px; 
+    border-radius: 6px; 
+}
+.btn-cerrar:hover { background-color: #b02a37; }
+.mensaje-vacio { 
+    background: #1a1a1a; 
+    border: 1px dashed #555; 
+    color: #bbb; 
+    padding: 20px; 
+    border-radius: 10px; 
+    text-align: center; 
+}
+.loading { text-align: center; padding: 50px; }
+.spinner { 
+    border: 4px solid #333; 
+    border-top: 4px solid var(--militar-gold); 
+    border-radius: 50%; 
+    width: 40px; 
+    height: 40px; 
+    animation: spin 1s linear infinite; 
+    margin: 0 auto 20px; 
+}
+@keyframes spin { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+}
+
+/* ESTO SÍ FUNCIONA - SOLO CSS, NO TOCA JS */
+#selectorContainer {
+    display: block !important;
+    background-color: #1a1a1a !important;
+    border: 1px solid #f39c12 !important;
+    border-radius: 8px !important;
+    padding: 15px !important;
+    margin: 15px 0 !important;
+}
+
+.form-check-input {
+    accent-color: #f39c12;
+    transform: scale(1.1);
+    margin-right: 8px;
+}
+
+.form-check-label {
+    color: #ddd !important;
+    font-size: 0.85rem;
+}
